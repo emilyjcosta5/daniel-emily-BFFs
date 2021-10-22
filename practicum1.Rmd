@@ -13,9 +13,7 @@ mydb <-  dbConnect(MySQL(), user = "root", password = '',
                  dbname = 'Practicum1', host = 'localhost', port = 3306)
 ```
 
-
-# airlines
-# aid: auto generate, code: NULL, airline: "Aircraft: Airline/Operator"
+# 1
 ```{sql connection=mydb}
 CREATE TABLE airlines (
   aid INT(6) UNSIGNED AUTO_INCREMENT,
@@ -24,9 +22,6 @@ CREATE TABLE airlines (
   PRIMARY KEY (aid)
 )
 ```
-
-# airports
-# pid: auto generate, code: NULL, name: "Airport: Name", city: NULL, state: "Origin State", country: USA
 ```{sql connection=mydb}
 CREATE TABLE airports (
   pid INT(6) UNSIGNED AUTO_INCREMENT,
@@ -38,12 +33,12 @@ CREATE TABLE airports (
   PRIMARY KEY (pid)
 )
 ```
-
-# incidents
-# iid: "Record ID", date: "FlightDate" (truncate time), depPort: "pid" (from airports table), airline: "aid" (from airlines table), aircraft: "Aircraft: Make/Model", arrPort: "pid" (same as depPort), flightPhase: "When: Phase of flight" (takeoff, landing, inflight, unknown), impact: "Effect: Impact to flight"
+```{sql connection=mydb}
+DROP TABLE incidents
+```
 ```{sql connection=mydb}
 CREATE TABLE incidents(
-  iid INT(6) UNSIGNED, 
+  iid INT(6) UNSIGNED AUTO_INCREMENT, 
   date DATE, 
   depPort INT(6) UNSIGNED, 
   arrPort INT(6) UNSIGNED, 
@@ -58,3 +53,12 @@ CREATE TABLE incidents(
   FOREIGN KEY (airline) REFERENCES airlines(aid)
 )
 ```
+
+# 2
+```{r}
+df <- read.csv('./BirdStrikesData.csv')
+airlines <- 
+values &lt;- paste0(apply(airlines, 1, function(x) paste0("('", paste0(x, collapse = "', '"), "')")), collapse = ", ")
+dbSendQuery(dcon, paste0("INSERT INTO blog__r_dataframe VALUES ", values, ";"))
+```
+
