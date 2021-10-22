@@ -1,0 +1,19 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+install.packages("RMySQL"); 
+library(RMySQL)
+library(DBI)
+
+fpath = "./"
+dbfile = "MediaDB.db"
+conn <- dbConnect(RSQLite::SQLite(), paste0(fpath,dbfile))
+```
+
+```{r}
+
+```
+z
