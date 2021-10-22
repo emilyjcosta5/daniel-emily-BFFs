@@ -4,16 +4,46 @@ output: html_notebook
 ---
 
 ```{r}
-install.packages("RMySQL"); 
+#install.packages("RMySQL"); 
+#install.packages("odbc")
+# https://db.rstudio.com/best-practices/drivers/
 library(RMySQL)
+#install.packages("RMariaDB")
 library(DBI)
 
 fpath = "./"
-dbfile = "MediaDB.db"
-conn <- dbConnect(RSQLite::SQLite(), paste0(fpath,dbfile))
+dbfile = "bird_strikes.db"
+#conn <- dbConnect(odbc::odbc(), 
+#                  Driver = "SQL Server", 
+#                  Server = paste0(fpath,dbfile), 
+#                  UID    = rstudioapi::askForPassword("Database user"),
+#                  PWD    = studioapi::askForPassword("Database password"),
+#                  port   = 3306)
+#conn <- dbConnect(RMariaDB::MariaDB(), 
+#                  group  = "rs_dbi")
+mydb <-  dbConnect(MySQL(), user = "root", password = '',
+                 dbname = 'Practicum1', host = 'localhost', port = 3306)
 ```
 
-```{r}
 
+# airlines
+# aid: auto generate, code: NULL, airline: "Aircraft: Airline/Operator"
+```{sql connection=mydb}
+CREATE TABLE airlines (
+  aid INT(6) UNSIGNED AUTO_INCREMENT,
+  code INT UNSIGNED,
+  airline VARCHAR(30) NOT NULL,
+  PRIMARY KEY (aid)
+)
 ```
-z
+
+# airports
+# pid: auto generate, code: NULL, name: "Airport: Name", city: NULL, state: "Origin State", country: USA
+
+# incidents
+# iid: "Record ID", date: "FlightDate" (truncate time), depPort: "pid" (from airports table), airline: "aid" (from airlines table), aircraft: "Aircraft: Make/Model", arrPort: "pid" (same as depPort), flightPhase: "When: Phase of flight" (takeoff, landing, inflight, unknown), impact: "Effect: Impact to flight"
+```{sql connection=mydb}
+CREATE incidents(iid, date, depPort, arrPort, airline, aircraft, flightPhase, impact)
+```
+
+

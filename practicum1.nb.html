@@ -217,25 +217,69 @@ pre code {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2luc3RhbGwucGFja2FnZXMoXCJSTXlTUUxcIik7IFxubGlicmFyeShSTXlTUUwpXG5saWJyYXJ5KERCSSlcblxuZnBhdGggPSBcIi4vXCJcbmRiZmlsZSA9IFwiTWVkaWFEQi5kYlwiXG5jb25uIDwtIGRiQ29ubmVjdChSU1FMaXRlOjpTUUxpdGUoKSwgcGFzdGUwKGZwYXRoLGRiZmlsZSkpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2luc3RhbGwucGFja2FnZXMoXCJSTXlTUUxcIik7IFxuI2luc3RhbGwucGFja2FnZXMoXCJvZGJjXCIpXG4jIGh0dHBzOi8vZGIucnN0dWRpby5jb20vYmVzdC1wcmFjdGljZXMvZHJpdmVycy9cbmxpYnJhcnkoUk15U1FMKVxuI2luc3RhbGwucGFja2FnZXMoXCJSTWFyaWFEQlwiKVxubGlicmFyeShEQkkpXG5cbmZwYXRoID0gXCIuL1wiXG5kYmZpbGUgPSBcImJpcmRfc3RyaWtlcy5kYlwiXG4jY29ubiA8LSBkYkNvbm5lY3Qob2RiYzo6b2RiYygpLCBcbiMgICAgICAgICAgICAgICAgICBEcml2ZXIgPSBcIlNRTCBTZXJ2ZXJcIiwgXG4jICAgICAgICAgICAgICAgICAgU2VydmVyID0gcGFzdGUwKGZwYXRoLGRiZmlsZSksIFxuIyAgICAgICAgICAgICAgICAgIFVJRCAgICA9IHJzdHVkaW9hcGk6OmFza0ZvclBhc3N3b3JkKFwiRGF0YWJhc2UgdXNlclwiKSxcbiMgICAgICAgICAgICAgICAgICBQV0QgICAgPSBzdHVkaW9hcGk6OmFza0ZvclBhc3N3b3JkKFwiRGF0YWJhc2UgcGFzc3dvcmRcIiksXG4jICAgICAgICAgICAgICAgICAgcG9ydCAgID0gMzMwNilcbiNjb25uIDwtIGRiQ29ubmVjdChSTWFyaWFEQjo6TWFyaWFEQigpLCBcbiMgICAgICAgICAgICAgICAgICBncm91cCAgPSBcInJzX2RiaVwiKVxubXlkYiA8LSAgZGJDb25uZWN0KE15U1FMKCksIHVzZXIgPSBcInJvb3RcIiwgcGFzc3dvcmQgPSAnJyxcbiAgICAgICAgICAgICAgICAgZGJuYW1lID0gJ1ByYWN0aWN1bTEnLCBob3N0ID0gJ2xvY2FsaG9zdCcsIHBvcnQgPSAzMzA2KVxuYGBgIn0= -->
 <pre class="r"><code>#install.packages(&quot;RMySQL&quot;); 
+#install.packages(&quot;odbc&quot;)
+# https://db.rstudio.com/best-practices/drivers/
 library(RMySQL)
+#install.packages(&quot;RMariaDB&quot;)
 library(DBI)
 
 fpath = &quot;./&quot;
-dbfile = &quot;MediaDB.db&quot;
-conn &lt;- dbConnect(RSQLite::SQLite(), paste0(fpath,dbfile))</code></pre>
+dbfile = &quot;bird_strikes.db&quot;
+#conn &lt;- dbConnect(odbc::odbc(), 
+#                  Driver = &quot;SQL Server&quot;, 
+#                  Server = paste0(fpath,dbfile), 
+#                  UID    = rstudioapi::askForPassword(&quot;Database user&quot;),
+#                  PWD    = studioapi::askForPassword(&quot;Database password&quot;),
+#                  port   = 3306)
+#conn &lt;- dbConnect(RMariaDB::MariaDB(), 
+#                  group  = &quot;rs_dbi&quot;)
+mydb &lt;-  dbConnect(MySQL(), user = &quot;root&quot;, password = &#39;&#39;,
+                 dbname = &#39;Practicum1&#39;, host = &#39;localhost&#39;, port = 3306)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<div id="airlines" class="section level1">
+<h1>airlines</h1>
+</div>
+<div id="aid-auto-generate-code-null-airline-aircraft-airlineoperator" class="section level1">
+<h1>aid: auto generate, code: NULL, airline: “Aircraft: Airline/Operator”</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgc3FsXG5DUkVBVEUgVEFCTEUgYWlybGluZXMgKFxuICBhaWQgSU5UKDYpIFVOU0lHTkVEIEFVVE9fSU5DUkVNRU5ULFxuICBjb2RlIElOVCBVTlNJR05FRCxcbiAgYWlybGluZSBWQVJDSEFSKDMwKSBOT1QgTlVMTCxcbiAgUFJJTUFSWSBLRVkgKGFpZClcbilcbmBgYCJ9 -->
+<pre class="sql"><code>CREATE TABLE airlines (
+  aid INT(6) UNSIGNED AUTO_INCREMENT,
+  code INT UNSIGNED,
+  airline VARCHAR(30) NOT NULL,
+  PRIMARY KEY (aid)
+)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="airports" class="section level1">
+<h1>airports</h1>
+</div>
+<div id="pid-auto-generate-code-null-name-airport-name-city-null-state-origin-state-country-usa" class="section level1">
+<h1>pid: auto generate, code: NULL, name: “Airport: Name”, city: NULL, state: “Origin State”, country: USA</h1>
+</div>
+<div id="incidents" class="section level1">
+<h1>incidents</h1>
+</div>
+<div id="iid-record-id-date-flightdate-truncate-time-depport-pid-from-airports-table-airline-aid-from-airlines-table-aircraft-aircraft-makemodel-arrport-pid-same-as-depport-flightphase-when-phase-of-flight-takeoff-landing-inflight-unknown-impact-effect-impact-to-flight" class="section level1">
+<h1>iid: “Record ID”, date: “FlightDate” (truncate time), depPort: “pid” (from airports table), airline: “aid” (from airlines table), aircraft: “Aircraft: Make/Model”, arrPort: “pid” (same as depPort), flightPhase: “When: Phase of flight” (takeoff, landing, inflight, unknown), impact: “Effect: Impact to flight”</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgc3FsXG5DUkVBVEUgaW5jaWRlbnRzKGlpZCwgZGF0ZSwgZGVwUG9ydCwgYXJyUG9ydCwgYWlybGluZSwgYWlyY3JhZnQsIGZsaWdodFBoYXNlLCBpbXBhY3QpXG5gYGAifQ== -->
+<pre class="sql"><code>CREATE incidents(iid, date, depPort, arrPort, airline, aircraft, flightPhase, impact)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>z</p>
-<!-- rnb-text-end -->
+</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9Cmluc3RhbGwucGFja2FnZXMoIlJNeVNRTCIpOyAKbGlicmFyeShSTXlTUUwpCmxpYnJhcnkoREJJKQoKZnBhdGggPSAiLi8iCmRiZmlsZSA9ICJNZWRpYURCLmRiIgpjb25uIDwtIGRiQ29ubmVjdChSU1FMaXRlOjpTUUxpdGUoKSwgcGFzdGUwKGZwYXRoLGRiZmlsZSkpCmBgYAoKYGBge3J9CgpgYGAKeg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CiNpbnN0YWxsLnBhY2thZ2VzKCJSTXlTUUwiKTsgCiNpbnN0YWxsLnBhY2thZ2VzKCJvZGJjIikKIyBodHRwczovL2RiLnJzdHVkaW8uY29tL2Jlc3QtcHJhY3RpY2VzL2RyaXZlcnMvCmxpYnJhcnkoUk15U1FMKQojaW5zdGFsbC5wYWNrYWdlcygiUk1hcmlhREIiKQpsaWJyYXJ5KERCSSkKCmZwYXRoID0gIi4vIgpkYmZpbGUgPSAiYmlyZF9zdHJpa2VzLmRiIgojY29ubiA8LSBkYkNvbm5lY3Qob2RiYzo6b2RiYygpLCAKIyAgICAgICAgICAgICAgICAgIERyaXZlciA9ICJTUUwgU2VydmVyIiwgCiMgICAgICAgICAgICAgICAgICBTZXJ2ZXIgPSBwYXN0ZTAoZnBhdGgsZGJmaWxlKSwgCiMgICAgICAgICAgICAgICAgICBVSUQgICAgPSByc3R1ZGlvYXBpOjphc2tGb3JQYXNzd29yZCgiRGF0YWJhc2UgdXNlciIpLAojICAgICAgICAgICAgICAgICAgUFdEICAgID0gc3R1ZGlvYXBpOjphc2tGb3JQYXNzd29yZCgiRGF0YWJhc2UgcGFzc3dvcmQiKSwKIyAgICAgICAgICAgICAgICAgIHBvcnQgICA9IDMzMDYpCiNjb25uIDwtIGRiQ29ubmVjdChSTWFyaWFEQjo6TWFyaWFEQigpLCAKIyAgICAgICAgICAgICAgICAgIGdyb3VwICA9ICJyc19kYmkiKQpteWRiIDwtICBkYkNvbm5lY3QoTXlTUUwoKSwgdXNlciA9ICJyb290IiwgcGFzc3dvcmQgPSAnJywKICAgICAgICAgICAgICAgICBkYm5hbWUgPSAnUHJhY3RpY3VtMScsIGhvc3QgPSAnbG9jYWxob3N0JywgcG9ydCA9IDMzMDYpCmBgYAoKCiMgYWlybGluZXMKIyBhaWQ6IGF1dG8gZ2VuZXJhdGUsIGNvZGU6IE5VTEwsIGFpcmxpbmU6ICJBaXJjcmFmdDogQWlybGluZS9PcGVyYXRvciIKYGBge3NxbCBjb25uZWN0aW9uPW15ZGJ9CkNSRUFURSBUQUJMRSBhaXJsaW5lcyAoCiAgYWlkIElOVCg2KSBVTlNJR05FRCBBVVRPX0lOQ1JFTUVOVCwKICBjb2RlIElOVCBVTlNJR05FRCwKICBhaXJsaW5lIFZBUkNIQVIoMzApIE5PVCBOVUxMLAogIFBSSU1BUlkgS0VZIChhaWQpCikKYGBgCgojIGFpcnBvcnRzCiMgcGlkOiBhdXRvIGdlbmVyYXRlLCBjb2RlOiBOVUxMLCBuYW1lOiAiQWlycG9ydDogTmFtZSIsIGNpdHk6IE5VTEwsIHN0YXRlOiAiT3JpZ2luIFN0YXRlIiwgY291bnRyeTogVVNBCgojIGluY2lkZW50cwojIGlpZDogIlJlY29yZCBJRCIsIGRhdGU6ICJGbGlnaHREYXRlIiAodHJ1bmNhdGUgdGltZSksIGRlcFBvcnQ6ICJwaWQiIChmcm9tIGFpcnBvcnRzIHRhYmxlKSwgYWlybGluZTogImFpZCIgKGZyb20gYWlybGluZXMgdGFibGUpLCBhaXJjcmFmdDogIkFpcmNyYWZ0OiBNYWtlL01vZGVsIiwgYXJyUG9ydDogInBpZCIgKHNhbWUgYXMgZGVwUG9ydCksIGZsaWdodFBoYXNlOiAiV2hlbjogUGhhc2Ugb2YgZmxpZ2h0IiAodGFrZW9mZiwgbGFuZGluZywgaW5mbGlnaHQsIHVua25vd24pLCBpbXBhY3Q6ICJFZmZlY3Q6IEltcGFjdCB0byBmbGlnaHQiCmBgYHtzcWwgY29ubmVjdGlvbj1teWRifQpDUkVBVEUgaW5jaWRlbnRzKGlpZCwgZGF0ZSwgZGVwUG9ydCwgYXJyUG9ydCwgYWlybGluZSwgYWlyY3JhZnQsIGZsaWdodFBoYXNlLCBpbXBhY3QpCmBgYAoKCg==</div>
 
 
 
