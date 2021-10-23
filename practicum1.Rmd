@@ -60,6 +60,7 @@ df <- read.csv('./BirdStrikesData.csv')
 incident_df = df[,c("FlightDate", "Aircraft..Make.Model", "When..Phase.of.flight")]
 colnames(incident_df) <- c('Date', 'aircraft', 'flightPhase')
 gsub(incident_df$Date,pattern=" 0:00",replacement="",fixed=T)
+print(incident_df)
 dbWriteTable(mydb, name="incidents", value = incident_df, overwrite=TRUE, row.names = FALSE, field.types=c())
 
 #airlines <- unique(df$Aircraft..Airline.Operator)
