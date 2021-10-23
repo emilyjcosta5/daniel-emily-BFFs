@@ -57,15 +57,28 @@ CREATE TABLE incidents(
 # 2
 ```{r}
 df <- read.csv('./BirdStrikesData.csv')
-airlines <- unique(df$Aircraft..Airline.Operator)
-airlines[airlines==""]<-'UNKNOWN'
-airlines <- as.data.frame(airlines)
-colnames(airlines) <- c('airline')
-print(airlines)
-airline$code <- NA
-airline$aid <- NA
-dbWriteTable(conn=mydb, name='airlines', value=airlines, append=TRUE, row.names=FALSE, field.types=c())
-chk <- dbGetQuery(mydb, 'select * from airlines')
-print(chk)
+incident_df = df[,c("FlightDate", "Aircraft..Make.Model", "When..Phase.of.flight")]
+colnames(incident_df) <- c('Date', 'aircraft', 'flightPhase')
+print(incident_df)
+dbWriteTable(mydb, name="incidents", value = incident_df, append=TRUE, row.names = FALSE, field.types=c())
+
+#airlines <- unique(df$Aircraft..Airline.Operator)
+#airlines[airlines==""]<-'UNKNOWN'
+#airlines <- as.data.frame(airlines)
+#colnames(airlines) <- c('airline')
+#print(airlines)
+#airline$code <- NA
+#airline$aid <- NA
+#dbWriteTable(conn=mydb, name='airlines', value=airlines, append=TRUE, row.names=FALSE, field.types=c())
+#chk <- dbGetQuery(mydb, 'select * from airlines')
+#print(chk)
 ```
+```{sql connection=mydb}
+select * from incidents
+```
+
+
+
+
+
 
