@@ -16,9 +16,9 @@ mydb <-  dbConnect(MySQL(), user = "root", password = '',
 # 1
 ```{sql connection=mydb}
 CREATE TABLE airlines (
-  aid INT(6) UNSIGNED AUTO_INCREMENT,
-  code INT UNSIGNED,
   airline VARCHAR(30) NOT NULL,
+  code INT UNSIGNED,
+  aid INT(6) UNSIGNED AUTO_INCREMENT,
   PRIMARY KEY (aid)
 )
 ```
@@ -57,8 +57,15 @@ CREATE TABLE incidents(
 # 2
 ```{r}
 df <- read.csv('./BirdStrikesData.csv')
-airlines <- 
-values &lt;- paste0(apply(airlines, 1, function(x) paste0("('", paste0(x, collapse = "', '"), "')")), collapse = ", ")
-dbSendQuery(dcon, paste0("INSERT INTO blog__r_dataframe VALUES ", values, ";"))
+airlines <- unique(df$Aircraft..Airline.Operator)
+airlines[airlines==""]<-'UNKNOWN'
+airlines <- as.data.frame(airlines)
+colnames(airlines) <- c('airline')
+print(airlines)
+airline$code <- NA
+airline$aid <- NA
+dbWriteTable(conn=mydb, name='airlines', value=airlines, append=TRUE, row.names=FALSE, field.types=c())
+chk <- dbGetQuery(mydb, 'select * from airlines')
+print(chk)
 ```
 
