@@ -68,12 +68,13 @@ dbWriteTable(conn=mydb, name='airlines', value=airlines, append=TRUE, row.names=
 chk <- dbGetQuery(mydb, 'select * from airlines')
 print(chk)
 ```
-pid INT(6) UNSIGNED AUTO_INCREMENT,
-  code INT UNSIGNED,
-  name VARCHAR(30) NOT NULL,
-  city VARCHAR(20),
-  state VARCHAR(20),
-  country
+#populate:
+#pid INT(6) UNSIGNED AUTO_INCREMENT,
+#  code INT UNSIGNED,
+#  name VARCHAR(30) NOT NULL,
+#  city VARCHAR(20),
+#  state VARCHAR(20),
+#  country
 ```{r}
 df <- read.csv('./BirdStrikesData.csv')
 airports <-
