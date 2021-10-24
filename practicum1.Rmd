@@ -57,12 +57,15 @@ CREATE TABLE incidents(
 # 2
 ```{r}
 df <- read.csv('./BirdStrikesData.csv')
-
 incident_df = unique(df[,c("FlightDate", "Aircraft..Make.Model", "When..Phase.of.flight")])
+incident_df[incident_df==""]<-'UNKNOWN'
 colnames(incident_df) <- c('date', 'aircraft', 'flightPhase')
 gsub(incident_df$Date,pattern=" 0:00",replacement="")
-incident_df$iid <- NA
+df 
+
+print(incident_df)
 dbWriteTable(mydb, name="incidents", value = incident_df, append=TRUE, row.names = FALSE, field.types=c())
+
 
 airport_df = unique(df[,c("Airport..Name", "Origin.State")])
 airport_df[airport_df==""]<-'UNKNOWN'
@@ -74,6 +77,7 @@ airport_df$pid <- NA
 dbWriteTable(mydb, name="airports", value = airport_df, append=TRUE, row.names = FALSE, field.types=c())
 
 
+
 airlines <- unique(df$Aircraft..Airline.Operator)
 airlines[airlines==""]<-'UNKNOWN'
 airlines <- as.data.frame(airlines)
@@ -82,6 +86,9 @@ airlines$code <- NA
 airlines$aid <- NA
 dbWriteTable(conn=mydb, name='airlines', value=airlines, append=TRUE, row.names=FALSE, field.types=c())
 
+
+
+#Joins
 ```
 #3
 ```{r}
@@ -101,6 +108,21 @@ from airports, incidents
 where indicents.arrPort = airports.pid and airports.Name like "%Laguardia%"
 
 ```
+
+#5
+```{sql connection=mydb}
+select airports.Name
+from incidents, airports, airlines
+where incidents.arrPort = airports.pid and incidents.aircraft and airlines.aid=incidents.airline 
+and airlines.airline not like ('%Business%') 
+and airlines.airline not like ('%Executive%') 
+and airlines.airline not like ('%Privately Owned%') 
+and airlines.airline not like ('%Military%')
+group by incidents.arrPort
+order by count(*) desc
+limit 1
+```
+
 
 
 
