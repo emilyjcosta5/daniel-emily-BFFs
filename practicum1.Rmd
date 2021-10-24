@@ -58,12 +58,14 @@ CREATE TABLE incidents(
 ```{r}
 df <- read.csv('./BirdStrikesData.csv')
 
-incident_df = df[,c("Record.ID", "FlightDate", "Aircraft..Make.Model", "When..Phase.of.flight")]
-colnames(incident_df) <- c('pid', 'name', 'aircraft', 'flightPhase')
+incident_df = unique(df[,c("FlightDate", "Aircraft..Make.Model", "When..Phase.of.flight")])
+colnames(incident_df) <- c('date', 'aircraft', 'flightPhase')
 gsub(incident_df$Date,pattern=" 0:00",replacement="")
-dbWriteTable(mydb, name="incidents", value = incident_df, overwrite=TRUE, row.names = FALSE, field.types=c())
+incident_df$iid <- NA
+dbWriteTable(mydb, name="incidents", value = incident_df, append=TRUE, row.names = FALSE, field.types=c())
 
 airport_df = unique(df[,c("Airport..Name", "Origin.State")])
+airport_df[airport_df==""]<-'UNKNOWN'
 airport_df$City <- NA
 airport_df$Country <- "United States"
 colnames(airport_df) <- c('Name', 'State', 'City', 'Country')
@@ -76,7 +78,6 @@ airlines <- unique(df$Aircraft..Airline.Operator)
 airlines[airlines==""]<-'UNKNOWN'
 airlines <- as.data.frame(airlines)
 colnames(airlines) <- c('airline')
-print(airlines)
 airlines$code <- NA
 airlines$aid <- NA
 dbWriteTable(conn=mydb, name='airlines', value=airlines, append=TRUE, row.names=FALSE, field.types=c())
@@ -93,5 +94,13 @@ print(chk_airp)
 chk_inc <- dbGetQuery(mydb, 'select * from incidents limit 20')
 print(chk_inc)
 ```
+#4
+```{sql connection=mydb}
+select count(*)
+from airports, incidents
+where indicents.arrPort = airports.pid and airports.Name like "%Laguardia%"
+
+```
+
 
 
