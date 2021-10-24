@@ -34,7 +34,7 @@ CREATE TABLE airports (
 )
 ```
 ```{sql connection=mydb}
-DROP TABLE incidents
+DROP TABLE airports
 ```
 ```{sql connection=mydb}
 CREATE TABLE incidents(
@@ -57,27 +57,41 @@ CREATE TABLE incidents(
 # 2
 ```{r}
 df <- read.csv('./BirdStrikesData.csv')
+
+incident_df = df[,c("Record.ID", "FlightDate", "Aircraft..Make.Model", "When..Phase.of.flight")]
+colnames(incident_df) <- c('pid', 'name', 'aircraft', 'flightPhase')
+gsub(incident_df$Date,pattern=" 0:00",replacement="")
+dbWriteTable(mydb, name="incidents", value = incident_df, overwrite=TRUE, row.names = FALSE, field.types=c())
+
+airport_df = unique(df[,c("Airport..Name", "Origin.State")])
+airport_df$City <- NA
+airport_df$Country <- "United States"
+colnames(airport_df) <- c('Name', 'State', 'City', 'Country')
+airport_df$code <- NA
+airport_df$pid <- NA
+dbWriteTable(mydb, name="airports", value = airport_df, append=TRUE, row.names = FALSE, field.types=c())
+
+
 airlines <- unique(df$Aircraft..Airline.Operator)
 airlines[airlines==""]<-'UNKNOWN'
 airlines <- as.data.frame(airlines)
 colnames(airlines) <- c('airline')
 print(airlines)
-airline$code <- NA
-airline$aid <- NA
+airlines$code <- NA
+airlines$aid <- NA
 dbWriteTable(conn=mydb, name='airlines', value=airlines, append=TRUE, row.names=FALSE, field.types=c())
-chk <- dbGetQuery(mydb, 'select * from airlines')
-print(chk)
+
 ```
-#populate:
-#pid INT(6) UNSIGNED AUTO_INCREMENT,
-#  code INT UNSIGNED,
-#  name VARCHAR(30) NOT NULL,
-#  city VARCHAR(20),
-#  state VARCHAR(20),
-#  country
+#3
 ```{r}
-df <- read.csv('./BirdStrikesData.csv')
-airports <-
+chk_airl <- dbGetQuery(mydb, 'select * from airlines limit 20')
+print(chk_airl)
+
+chk_airp <- dbGetQuery(mydb, 'select * from airports limit 20')
+print(chk_airp)
+
+chk_inc <- dbGetQuery(mydb, 'select * from incidents limit 20')
+print(chk_inc)
 ```
 
 
