@@ -61,8 +61,8 @@ DELETE FROM airlines;
 DELETE FROM airports;
 ```
 ```{r}
-airport_df = unique(df[,c(                                              "Airport..Name", "Origin.State")])
 df <- read.csv('./BirdStrikesData.csv')
+airport_df = unique(df[,c("Airport..Name", "Origin.State")])
 airport_df = unique(df[,c("Airport..Name", "Origin.State")])
 airport_df[airport_df==""]<-'UNKNOWN'
 airport_df$City <- NA
@@ -115,7 +115,7 @@ incident_df$flightPhase[incident_df$flightPhase %in% landing] <- "landing"
 incident_df$flightPhase[incident_df$flightPhase %in% inflight] <- "inflight"
 incident_df$flightPhase[!incident_df$flightPhase %in% not_unknown] <- "unknown"
 print(incident_df)
-#dbWriteTable(conn=mydb, name='incidents', value=incident_df, append=TRUE, row.names=FALSE, field.types=c())
+dbWriteTable(conn=mydb, name='incidents', value=incident_df, append=TRUE, row.names=FALSE, field.types=c())
 ```
 
 #3
@@ -135,9 +135,11 @@ where incidents.arrPort = airports.pid and airports.Name like "%Laguardia%"
 ```
 #5
 ```{sql connection=mydb}
-select airports.Name
+select airports.Name, count(*) as count
 from incidents, airports, airlines
-where incidents.arrPort = airports.pid and incidents.aircraft and airlines.aid=incidents.airline 
+where incidents.arrPort = airports.pid 
+and incidents.airline = airlines.aid
+and airlines.aid=incidents.airline 
 and airlines.airline not like ('%Business%') 
 and airlines.airline not like ('%Executive%') 
 and airlines.airline not like ('%Privately Owned%') 
@@ -146,6 +148,8 @@ group by incidents.arrPort
 order by count(*) desc
 limit 1
 ```
+
+
 #6
 ```{sql connection=mydb}
 select YEAR(STR_TO_DATE(date, "%m/%d/%Y")) as Year, count(*) as NumBirdStrikes
@@ -154,8 +158,9 @@ where YEAR(STR_TO_DATE(date, "%m/%d/%Y")) is not null
 group by YEAR(STR_TO_DATE(date, "%m/%d/%Y"))
 order by NumBirdStrikes desc
 
-
 ```
+
+
 
 
 #7
