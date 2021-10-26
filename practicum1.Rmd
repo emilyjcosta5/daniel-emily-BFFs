@@ -87,17 +87,15 @@ df <- read.csv('./BirdStrikesData.csv')
 incident_df = unique(df[,c("FlightDate", "Aircraft..Make.Model", "When..Phase.of.flight","Effect..Impact.to.flight","Airport..Name","Aircraft..Airline.Operator")])
 colnames(incident_df) <- c('date', 'aircraft', 'flightPhase','impact','arrPort','airline')
 incident_df[incident_df==""]<-'UNKNOWN'
-
-gsub(incident_df$Date,pattern=" 0:00",replacement="")
+incident_df$date <- as.character(incident_df$date)
+incident_df$date = gsub(" 0:00", "", incident_df$date)#gsub(incident_df$date, pattern="",replacement="")
+incident_df$date = as.Date(incident_df$date, "%m/%d/%Y")
 airlines_df <- dbGetQuery(mydb, 'select * from airlines')
 airlines_df = unique(airlines_df[,c("aid","airline")])
 airports_df <- dbGetQuery(mydb, 'select * from airports')
 airports_df = unique(airports_df[,c("pid","name")])
-print(incident_df)
 incident_df <- merge(incident_df, airlines_df, by="airline")
-print(incident_df)
 incident_df <- merge(incident_df, airports_df, by.x="arrPort", by.y="name")
-print(incident_df)
 drops <- c("name","airline","arrPort")
 incident_df = incident_df[ , !(names(incident_df) %in% drops)]
 incident_df$arrPort <- incident_df$pid
@@ -112,14 +110,9 @@ landing <- c("Landing Roll")
 inflight <- c("Climb","Descent","Approach")
 not_unknown <- c("takeoff","landing","inflight")
 flight_col <- grep("flightPhase",colnames(incident_df))
-#for(i in 1:nrow(incident_df)){
-#        print(incident_df[i,flight_col])
-#}
-
 incident_df$flightPhase[incident_df$flightPhase %in% takeoff] <- "takeoff"
 incident_df$flightPhase[incident_df$flightPhase %in% landing] <- "landing"
 incident_df$flightPhase[incident_df$flightPhase %in% inflight] <- "inflight"
-print(incident_df)
 incident_df$flightPhase[!incident_df$flightPhase %in% not_unknown] <- "unknown"
 print(incident_df)
 dbWriteTable(conn=mydb, name='incidents', value=incident_df, append=TRUE, row.names=FALSE, field.types=c())
