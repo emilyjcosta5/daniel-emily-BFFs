@@ -2,17 +2,14 @@
 title: "R Notebook"
 output: html_notebook
 ---
-
 ```{r}
 library(RMySQL)
 library(DBI)
-
 fpath = "./"
 dbfile = "bird_strikes.db"
 mydb <-  dbConnect(MySQL(), user = "root", password = '',
                  dbname = 'Practicum1', host = 'localhost', port = 3306)
 ```
-
 # 1
 ```{sql connection=mydb}
 CREATE TABLE airlines (
@@ -53,24 +50,36 @@ CREATE TABLE incidents(
   FOREIGN KEY (airline) REFERENCES airlines(aid)
 )
 ```
-
 # 2
+```{sql connection=mydb}
+DELETE FROM incidents;
+```
+```{sql connection=mydb}
+DELETE FROM airlines;
+```
+```{sql connection=mydb}
+DELETE FROM airports;
+```
 ```{r}
+<<<<<<< HEAD
+airport_df = unique(df[,c(                                              "Airport..Name", "Origin.State")])
+=======
 df <- read.csv('./BirdStrikesData.csv')
-
-
-
 airport_df = unique(df[,c("Airport..Name", "Origin.State")])
+>>>>>>> 657219a09ced8d8a1a31f49ef432b4825539ad39
 airport_df[airport_df==""]<-'UNKNOWN'
 airport_df$City <- NA
 airport_df$Country <- "United States"
 colnames(airport_df) <- c('Name', 'State', 'City', 'Country')
 airport_df$code <- NA
 airport_df$pid <- NA
+<<<<<<< HEAD
+dbWriteTable(mydb, name="airports", value = airport_df, append=TRUE, row.names = FALSE, field.types=c())
+```
+```{r}
+=======
 dbWriteTable(mydb, name='airports', value = airport_df, append=TRUE, row.names = FALSE, field.types=c())
-
-
-
+>>>>>>> 657219a09ced8d8a1a31f49ef432b4825539ad39
 airlines <- unique(df$Aircraft..Airline.Operator)
 airlines[airlines==""]<-'UNKNOWN'
 airlines <- as.data.frame(airlines)
@@ -78,36 +87,57 @@ colnames(airlines) <- c('airline')
 airlines$code <- NA
 airlines$aid <- NA
 dbWriteTable(conn=mydb, name='airlines', value=airlines, append=TRUE, row.names=FALSE, field.types=c())
-
-
+```
+```{r}
+df <- read.csv('./BirdStrikesData.csv')
+incident_df = unique(df[,c("FlightDate", "Aircraft..Make.Model", "When..Phase.of.flight","Effect..Impact.to.flight","Airport..Name","Aircraft..Airline.Operator")])
+colnames(incident_df) <- c('date', 'aircraft', 'flightPhase','impact','arrPort','airline')
+incident_df[incident_df==""]<-'UNKNOWN'
+gsub(incident_df$Date,pattern=" 0:00",replacement="")
+<<<<<<< HEAD
+airlines_df <- dbGetQuery(mydb, 'select * from airlines')
+airlines_df = unique(airlines_df[,c("aid","airline")])
+airports_df <- dbGetQuery(mydb, 'select * from airports')
+airports_df = unique(airports_df[,c("pid","name")])
+incident_df <- merge(incident_df, airlines_df, by="airline")
+incident_df <- merge(incident_df, airports_df, by.x="arrPort", by.y="name")
+drops <- c("name","airline","arrPort")
+incident_df = incident_df[ , !(names(incident_df) %in% drops)]
+incident_df$arrPort <- incident_df$pid
+incident_df$depPort <- incident_df$pid
+incident_df$airline <- incident_df$aid
+drops <- c("aid","pid")
+incident_df = incident_df[ , !(names(incident_df) %in% drops)]
+#'takeoff', 'landing', 'inflight', 'unknown'
+takeoff <- c("Take-off run")
+landing <- c("Landing Roll")
+inflight <- c("Climb","Descent","Approach")
+for(i in 1:nrow(incident_df)){
+        print(incident_df[i,])
+}
+print(incident_df)
+#dbWriteTable(conn=mydb, name='incidents', value=incident_df, append=TRUE, row.names=FALSE, field.types=c())
+=======
 incident_df = unique(df[,c("FlightDate", "Aircraft..Make.Model", "When..Phase.of.flight")])
 incident_df[incident_df==""]<-'UNKNOWN'
 colnames(incident_df) <- c('date', 'aircraft', 'flightPhase')
 gsub(incident_df$Date,pattern=" 0:00",replacement="")
 df 
-
 dbWriteTable(mydb, name="incidents", value = incident_df, append=TRUE, row.names = FALSE, field.types=c())
 #Joins
-
-
 dbWriteTable(mydb, name="temp_join", value = df, append=TRUE, row.names = FALSE, field.types=c())
 ```
-
-
 ```{sql connection=mydb}
 select *
 from temp_join, airports ap, airlines al, incidents inc
-
+>>>>>>> 657219a09ced8d8a1a31f49ef432b4825539ad39
 ```
-
 #3
 ```{r}
 chk_airl <- dbGetQuery(mydb, 'select * from airlines limit 20')
 print(chk_airl)
-
 chk_airp <- dbGetQuery(mydb, 'select * from airports limit 20')
 print(chk_airp)
-
 chk_inc <- dbGetQuery(mydb, 'select * from incidents limit 20')
 print(chk_inc)
 ```
@@ -115,10 +145,8 @@ print(chk_inc)
 ```{sql connection=mydb}
 select count(*)
 from airports, incidents
-where indicents.arrPort = airports.pid and airports.Name like "%Laguardia%"
-
+where incidents.arrPort = airports.pid and airports.Name like "%Laguardia%"
 ```
-
 #5
 ```{sql connection=mydb}
 select airports.Name
@@ -132,7 +160,53 @@ group by incidents.arrPort
 order by count(*) desc
 limit 1
 ```
+#6
+```{sql connection=mydb}
+select YEAR(STR_TO_DATE(date, "%m/%d/%Y")) as Year, count(*) as NumBirdStrikes
+from incidents
+where YEAR(STR_TO_DATE(date, "%m/%d/%Y")) is not null
+group by YEAR(STR_TO_DATE(date, "%m/%d/%Y"))
+order by NumBirdStrikes desc
 
+
+```
+
+
+#7
+```{r}
+bird_strikes <- dbGetQuery(mydb,'
+select YEAR(STR_TO_DATE(date, "%m/%d/%Y")) as Year, count(*) as NumBirdStrikes
+from incidents
+where YEAR(STR_TO_DATE(date, "%m/%d/%Y")) is not null
+and YEAR(STR_TO_DATE(date, "%m/%d/%Y")) > 2004 
+and YEAR(STR_TO_DATE(date, "%m/%d/%Y")) < 20012
+group by YEAR(STR_TO_DATE(date, "%m/%d/%Y"))
+order by year asc
+')
+
+plot(bird_strikes$Year, bird_strikes$NumBirdStrikes, type = "b", frame = FALSE, pch = 20, 
+     col = "red", xlab = "Year", ylab = "Number Bird Strikes", main = 'Bird Strike Incidents from 2005 to 2011')
+```
+
+#8
+```{sql connection=mydb}
+CREATE PROCEDURE RemoveBirdStrikeAircraft(IN aircraft_to_remove varchar(20))
+BEGIN
+delete from incidents 
+where incidents.aircraft = aircraft_to_remove;
+END
+```
+```{sql connection=mydb}
+select count(*) from incidents where aircraft='MD-80'
+```
+
+```{sql connection=mydb}
+Call RemoveBirdStrikeAircraft('MD-80');
+```
+
+```{sql connection=mydb}
+select count(*) from incidents where aircraft='MD-80';
+```
 
 
 
