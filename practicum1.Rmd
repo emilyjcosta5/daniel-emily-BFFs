@@ -110,20 +110,8 @@ for(i in 1:nrow(incident_df)){
 }
 print(incident_df)
 #dbWriteTable(conn=mydb, name='incidents', value=incident_df, append=TRUE, row.names=FALSE, field.types=c())
-incident_df = unique(df[,c("FlightDate", "Aircraft..Make.Model", "When..Phase.of.flight")])
-incident_df[incident_df==""]<-'UNKNOWN'
-colnames(incident_df) <- c('date', 'aircraft', 'flightPhase')
-gsub(incident_df$Date,pattern=" 0:00",replacement="")
-df 
-dbWriteTable(mydb, name="incidents", value = incident_df, append=TRUE, row.names = FALSE, field.types=c())
-#Joins
-dbWriteTable(mydb, name="temp_join", value = df, append=TRUE, row.names = FALSE, field.types=c())
 ```
-```{sql connection=mydb}
-select *
-from temp_join, airports ap, airlines al, incidents inc
->>>>>>> 657219a09ced8d8a1a31f49ef432b4825539ad39
-```
+
 #3
 ```{r}
 chk_airl <- dbGetQuery(mydb, 'select * from airlines limit 20')
