@@ -95,6 +95,7 @@ airlines_df = unique(airlines_df[,c("aid","airline")])
 airports_df <- dbGetQuery(mydb, 'select * from airports')
 airports_df = unique(airports_df[,c("pid","name")])
 incident_df <- merge(incident_df, airlines_df, by="airline")
+print(incident_df)
 incident_df <- merge(incident_df, airports_df, by.x="arrPort", by.y="name")
 drops <- c("name","airline","arrPort")
 incident_df = incident_df[ , !(names(incident_df) %in% drops)]
@@ -152,10 +153,10 @@ limit 1
 
 #6
 ```{sql connection=mydb}
-select YEAR(STR_TO_DATE(date, "%m/%d/%Y")) as Year, count(*) as NumBirdStrikes
+select YEAR(date) as Year, count(*) as NumBirdStrikes
 from incidents
-where YEAR(STR_TO_DATE(date, "%m/%d/%Y")) is not null
-group by YEAR(STR_TO_DATE(date, "%m/%d/%Y"))
+where YEAR(date) is not null
+group by YEAR(date)
 order by NumBirdStrikes desc
 
 ```
@@ -166,12 +167,12 @@ order by NumBirdStrikes desc
 #7
 ```{r}
 bird_strikes <- dbGetQuery(mydb,'
-select YEAR(STR_TO_DATE(date, "%m/%d/%Y")) as Year, count(*) as NumBirdStrikes
+select YEAR(date) as Year, count(*) as NumBirdStrikes
 from incidents
-where YEAR(STR_TO_DATE(date, "%m/%d/%Y")) is not null
-and YEAR(STR_TO_DATE(date, "%m/%d/%Y")) > 2004 
-and YEAR(STR_TO_DATE(date, "%m/%d/%Y")) < 20012
-group by YEAR(STR_TO_DATE(date, "%m/%d/%Y"))
+where YEAR(date) is not null
+and YEAR(date) > 2004 
+and YEAR(date) < 20012
+group by YEAR(date)
 order by year asc
 ')
 
