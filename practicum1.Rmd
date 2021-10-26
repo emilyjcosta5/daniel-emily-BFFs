@@ -61,25 +61,19 @@ DELETE FROM airlines;
 DELETE FROM airports;
 ```
 ```{r}
-<<<<<<< HEAD
 airport_df = unique(df[,c(                                              "Airport..Name", "Origin.State")])
-=======
 df <- read.csv('./BirdStrikesData.csv')
 airport_df = unique(df[,c("Airport..Name", "Origin.State")])
->>>>>>> 657219a09ced8d8a1a31f49ef432b4825539ad39
 airport_df[airport_df==""]<-'UNKNOWN'
 airport_df$City <- NA
 airport_df$Country <- "United States"
 colnames(airport_df) <- c('Name', 'State', 'City', 'Country')
 airport_df$code <- NA
 airport_df$pid <- NA
-<<<<<<< HEAD
 dbWriteTable(mydb, name="airports", value = airport_df, append=TRUE, row.names = FALSE, field.types=c())
 ```
 ```{r}
-=======
 dbWriteTable(mydb, name='airports', value = airport_df, append=TRUE, row.names = FALSE, field.types=c())
->>>>>>> 657219a09ced8d8a1a31f49ef432b4825539ad39
 airlines <- unique(df$Aircraft..Airline.Operator)
 airlines[airlines==""]<-'UNKNOWN'
 airlines <- as.data.frame(airlines)
@@ -94,7 +88,6 @@ incident_df = unique(df[,c("FlightDate", "Aircraft..Make.Model", "When..Phase.of
 colnames(incident_df) <- c('date', 'aircraft', 'flightPhase','impact','arrPort','airline')
 incident_df[incident_df==""]<-'UNKNOWN'
 gsub(incident_df$Date,pattern=" 0:00",replacement="")
-<<<<<<< HEAD
 airlines_df <- dbGetQuery(mydb, 'select * from airlines')
 airlines_df = unique(airlines_df[,c("aid","airline")])
 airports_df <- dbGetQuery(mydb, 'select * from airports')
@@ -117,7 +110,6 @@ for(i in 1:nrow(incident_df)){
 }
 print(incident_df)
 #dbWriteTable(conn=mydb, name='incidents', value=incident_df, append=TRUE, row.names=FALSE, field.types=c())
-=======
 incident_df = unique(df[,c("FlightDate", "Aircraft..Make.Model", "When..Phase.of.flight")])
 incident_df[incident_df==""]<-'UNKNOWN'
 colnames(incident_df) <- c('date', 'aircraft', 'flightPhase')
