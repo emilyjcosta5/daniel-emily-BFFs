@@ -95,7 +95,7 @@ airlines_df = unique(airlines_df[,c("aid","airline")])
 airports_df <- dbGetQuery(mydb, 'select * from airports')
 airports_df = unique(airports_df[,c("pid","name")])
 incident_df <- merge(incident_df, airlines_df, by="airline")
-print(incident_df)
+print(airports_df)
 incident_df <- merge(incident_df, airports_df, by.x="arrPort", by.y="name")
 drops <- c("name","airline","arrPort")
 incident_df = incident_df[ , !(names(incident_df) %in% drops)]
@@ -117,6 +117,7 @@ incident_df$flightPhase[incident_df$flightPhase %in% inflight] <- "inflight"
 incident_df$flightPhase[!incident_df$flightPhase %in% not_unknown] <- "unknown"
 print(incident_df)
 dbWriteTable(conn=mydb, name='incidents', value=incident_df, append=TRUE, row.names=FALSE, field.types=c())
+print(airport_df)
 ```
 
 #3
